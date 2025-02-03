@@ -13,6 +13,8 @@ const QuizApp = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [records, setRecords] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const questions = [
     {
@@ -52,8 +54,17 @@ const QuizApp = () => {
     XLSX.writeFile(workbook, "quiz_records.xlsx");
   };
 
+  const handleAdminLogin = () => {
+    if (adminPassword === "adminnurzijah123") {
+      setIsAuthenticated(true);
+    } else {
+      alert("Incorrect password");
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+      <h1 className="text-3xl font-bold mb-6">Kuis Farmakologi I</h1>
       <Card className="w-full max-w-lg p-6 shadow-lg rounded-xl">
         <CardContent>
           {!isAdmin ? (
@@ -101,15 +112,29 @@ const QuizApp = () => {
               </div>
             )
           ) : (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Admin Panel</h2>
-              <Button className="mb-4" onClick={exportToExcel}>Export to Excel</Button>
-              <ul className="text-left">
-                {records.map((record, index) => (
-                  <li key={index} className="mt-2">{record.name} ({record.number}, {record.class}) - Score: {record.score}</li>
-                ))}
-              </ul>
-            </div>
+            isAuthenticated ? (
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-4">Admin Panel</h2>
+                <Button className="mb-4" onClick={exportToExcel}>Export to Excel</Button>
+                <ul className="text-left">
+                  {records.map((record, index) => (
+                    <li key={index} className="mt-2">{record.name} ({record.number}, {record.class}) - Score: {record.score}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-4">Admin Login</h2>
+                <input 
+                  type="password" 
+                  placeholder="Enter Admin Password" 
+                  className="mb-2 p-2 w-full border rounded-lg" 
+                  value={adminPassword} 
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                />
+                <Button className="mt-4" onClick={handleAdminLogin}>Login</Button>
+              </div>
+            )
           )}
           <Button className="mt-4" onClick={() => setIsAdmin(!isAdmin)}>{isAdmin ? "Exit Admin Panel" : "Enter Admin Panel"}</Button>
         </CardContent>
